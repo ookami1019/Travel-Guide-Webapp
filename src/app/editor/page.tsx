@@ -127,7 +127,6 @@ export default function EditorPage() {
         {/* Center: Canvas Area */}
         <main className="flex-1 overflow-auto p-12 flex justify-center items-start bg-zinc-200/50 dark:bg-zinc-900/50 custom-scrollbar">
           <div className="relative">
-
             {/* A4 Canvas */}
             <div className="w-[1000px] aspect-[1.414/1] bg-white shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] dark:shadow-none flex relative rounded-sm overflow-hidden select-none">
 
@@ -136,13 +135,13 @@ export default function EditorPage() {
               <div className="absolute left-1/2 top-0 bottom-0 w-[40px] -translate-x-1/2 bg-zinc-500/5 pointer-events-none z-10" />
 
               {/* Left Page Editor */}
-              <div className="flex-1 h-full border-r border-zinc-50 p-10 flex flex-col items-center">
-                <PageContentRenderer page={sheets[currentSheetIndex].leftPage} />
+              <div className="flex-1 h-full border-r border-zinc-50 p-10 flex flex-col items-center relative">
+                <PageContentRenderer page={sheets[currentSheetIndex].leftPage} position="left" />
               </div>
 
               {/* Right Page Editor */}
-              <div className="flex-1 h-full p-10 flex flex-col items-center">
-                <PageContentRenderer page={sheets[currentSheetIndex].rightPage} />
+              <div className="flex-1 h-full p-10 flex flex-col items-center relative">
+                <PageContentRenderer page={sheets[currentSheetIndex].rightPage} position="right" />
               </div>
 
             </div>
@@ -170,7 +169,15 @@ export default function EditorPage() {
   );
 }
 
-function PageContentRenderer({ page }: { page: PageContent }) {
+function PageContentRenderer({ page, position }: { page: PageContent, position: 'left' | 'right' }) {
+  const pageNumberDisplay = (
+    <div className={`absolute bottom-6 ${position === 'left' ? 'left-6' : 'right-6'} pointer-events-none mix-blend-difference`}>
+      <span className="text-[10px] font-bold text-zinc-100 tracking-tighter opacity-80 uppercase">
+        P.{page.pageNum}
+      </span>
+    </div>
+  );
+
   if (page.pageNum === 1) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center p-12 border-2 border-dashed border-zinc-100 rounded-3xl relative">
@@ -181,9 +188,7 @@ function PageContentRenderer({ page }: { page: PageContent }) {
         <div className="mt-8 px-6 py-2 bg-zinc-50 rounded-full border border-zinc-100 text-[10px] font-bold text-zinc-400">
           FRONT COVER
         </div>
-        <div className="absolute bottom-4 text-zinc-100 text-xs font-bold mix-blend-difference">
-          {page.pageNum}
-        </div>
+        {pageNumberDisplay}
       </div>
     );
   }
@@ -207,6 +212,7 @@ function PageContentRenderer({ page }: { page: PageContent }) {
           <span className="text-[10px] font-bold text-zinc-300 italic">コンテンツを追加してください</span>
         </div>
       )}
+      {pageNumberDisplay}
     </div>
   );
 }
