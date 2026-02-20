@@ -44,13 +44,13 @@ export function ItineraryEditor({ content, onChange }: Props) {
   return (
     <div className="space-y-4">
       {spots.map((spot, index) => (
-        <div key={spot.id} className="bg-white border text-xs border-zinc-200 rounded-lg p-3 space-y-3 relative group">
+        <div key={spot.id} className="bg-white dark:bg-zinc-950 border text-xs border-zinc-200 dark:border-zinc-800 rounded-lg p-3 space-y-3 relative group">
           <div className="flex gap-2 items-center text-zinc-400 mb-1">
             <GripVertical size={14} className="cursor-grab" />
             <span className="font-bold text-[10px] uppercase">Spot {index + 1}</span>
             <button
-               onClick={() => removeSpot(spot.id)}
-               className="ml-auto p-1 hover:bg-red-50 hover:text-red-500 rounded text-zinc-300 transition-colors"
+              onClick={() => removeSpot(spot.id)}
+              className="ml-auto p-1 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 rounded text-zinc-300 dark:text-zinc-500 transition-colors"
             >
               <Trash2 size={12} />
             </button>
@@ -62,7 +62,7 @@ export function ItineraryEditor({ content, onChange }: Props) {
               type="time"
               value={spot.time}
               onChange={(e) => updateSpot(spot.id, { time: e.target.value })}
-              className="flex-1 bg-zinc-50 border border-zinc-200 rounded px-2 py-1 text-xs focus:ring-1 focus:ring-indigo-500 outline-none"
+              className="flex-1 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded px-2 py-1 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 outline-none"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -72,21 +72,21 @@ export function ItineraryEditor({ content, onChange }: Props) {
               value={spot.name}
               placeholder="スポット名"
               onChange={(e) => updateSpot(spot.id, { name: e.target.value })}
-              className="flex-1 bg-zinc-50 border border-zinc-200 rounded px-2 py-1 text-xs focus:ring-1 focus:ring-indigo-500 outline-none"
+              className="flex-1 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded px-2 py-1 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 outline-none"
             />
           </div>
           <textarea
             value={spot.description}
             placeholder="メモ（オプショナル）"
             onChange={(e) => updateSpot(spot.id, { description: e.target.value })}
-            className="w-full bg-zinc-50 border border-zinc-200 rounded px-2 py-1 text-xs focus:ring-1 focus:ring-indigo-500 outline-none resize-none h-16"
+            className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded px-2 py-1 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-indigo-500 outline-none resize-none h-16"
           />
         </div>
       ))}
 
       <button
         onClick={addSpot}
-        className="w-full py-2 border-2 border-dashed border-zinc-200 rounded-lg text-zinc-500 text-xs font-bold flex items-center justify-center gap-2 hover:bg-zinc-50 hover:border-zinc-300 transition-all"
+        className="w-full py-2 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-lg text-zinc-500 dark:text-zinc-400 text-xs font-bold flex items-center justify-center gap-2 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
       >
         <Plus size={14} /> スポットを追加
       </button>
