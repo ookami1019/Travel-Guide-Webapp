@@ -4,7 +4,7 @@ export interface TravelBlock {
   id: string;
   type: BlockType;
   title: string;
-  content: any;
+  content: Record<string, unknown>;
 }
 
 // ユーザーが編集時に扱う「論理ページ」

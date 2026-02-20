@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Save, Download, ChevronLeft, Settings, Share2, AlertCircle } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Download, ChevronLeft, Settings, Share2, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { EditorRibbon } from "@/components/Editor/EditorRibbon";
 import { SidebarThumbnails } from "@/components/Editor/SidebarThumbnails";
@@ -17,12 +16,42 @@ export default function EditorPage() {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [showImpositionPreview, setShowImpositionPreview] = useState(false);
 
-  // 4の倍数で管理
   const [pages, setPages] = useState<TravelPage[]>([
     { id: "p1", pageNum: 1, blocks: [] },
-    { id: "p2", pageNum: 2, blocks: [{ id: "b1", type: "itinerary", title: "行程表", content: {} }] },
-    { id: "p3", pageNum: 3, blocks: [{ id: "b2", type: "luggage", title: "持ち物リスト", content: {} }] },
-    { id: "p4", pageNum: 4, blocks: [] },
+    {
+      id: "p2", pageNum: 2, blocks: [{
+        id: "b1", type: "itinerary", title: "行程表", content: {
+          spots: [
+            { id: "spot-1", time: "09:00", name: "東京駅", description: "新幹線乗り場集合" },
+            { id: "spot-2", time: "11:30", name: "箱根湯本駅", description: "到着、ランチ" },
+          ]
+        }
+      }]
+    },
+    {
+      id: "p3", pageNum: 3, blocks: [{
+        id: "b2", type: "luggage", title: "持ち物リスト", content: {
+          categories: [
+            {
+              id: "cat-1", name: "基本", items: [
+                { id: "item-1", name: "着替え（2日分）", isChecked: false },
+                { id: "item-2", name: "洗面用具", isChecked: false }
+              ]
+            }
+          ]
+        }
+      }]
+    },
+    {
+      id: "p4", pageNum: 4, blocks: [{
+        id: "b3", type: "members", title: "参加メンバー", content: {
+          members: [
+            { id: "mem-1", name: "山田太郎", role: "幹事", isLeader: true },
+            { id: "mem-2", name: "佐藤花子", role: "会計" }
+          ]
+        }
+      }]
+    },
   ]);
 
   const addBlock = (type: BlockType) => {
@@ -56,9 +85,16 @@ export default function EditorPage() {
     }));
   };
 
-  const handleUpdateBlock = (blockId: string, content: any) => {
-    // 将来的な同期ロジック
-    console.log("Update block", blockId, content);
+  const handleUpdateBlock = (blockId: string, content: unknown) => {
+    setPages(prev => prev.map((page, idx) => {
+      if (idx === currentPageIndex) {
+        return {
+          ...page,
+          blocks: page.blocks.map(b => b.id === blockId ? { ...b, content: content as Record<string, unknown> } : b)
+        };
+      }
+      return page;
+    }));
   };
 
   const addPageSet = () => {
@@ -228,9 +264,9 @@ function PageContentRenderer({ page }: { page: TravelPage }) {
             <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{block.title}</span>
           </div>
           <div className={isOverflowing ? 'scale-[0.9] origin-top' : ''}>
-            {block.type === 'itinerary' && <div className="space-y-4 opacity-100"><ItineraryBlock /></div>}
-            {block.type === 'luggage' && <LuggageBlock />}
-            {block.type === 'members' && <MembersBlock />}
+            {block.type === 'itinerary' && <div className="space-y-4 opacity-100"><ItineraryBlock content={block.content} /></div>}
+            {block.type === 'luggage' && <LuggageBlock content={block.content} />}
+            {block.type === 'members' && <MembersBlock content={block.content} />}
             {(block.type === 'memo' || block.type === 'text') && (
               <div className="p-4 bg-amber-50/50 rounded-xl border border-amber-100 text-amber-900/40 text-xs italic">
                 📝 自由記述エリア

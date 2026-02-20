@@ -2,7 +2,7 @@
 
 import React from "react";
 import { X, Printer, Download } from "lucide-react";
-import { TravelPage } from "@/types/travel";
+import { TravelPage, TravelBlock } from "@/types/travel";
 
 interface Props {
   pages: TravelPage[];
@@ -113,7 +113,7 @@ function PreviewPageContent({ page }: { page: TravelPage }) {
   }
   return (
     <div className="w-full h-full space-y-4">
-      {page.blocks.map((block: any, i: number) => (
+      {page.blocks.map((block: TravelBlock, i: number) => (
         <div key={i} className="p-4 bg-white border border-zinc-100 rounded-xl shadow-sm">
           <div className="h-2 w-1/3 bg-zinc-100 rounded-full mb-3" />
           <div className="space-y-1.5">

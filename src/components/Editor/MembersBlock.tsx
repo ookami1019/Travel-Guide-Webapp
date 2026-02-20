@@ -1,90 +1,70 @@
 "use client";
 
-import React, { useState } from "react";
-import { Plus, Trash2, User, Star } from "lucide-react";
+import React from "react";
+import { User, Star } from "lucide-react";
+
+import Image from "next/image";
 
 interface Member {
   id: string;
   name: string;
   role: string;
-  isLeader: boolean;
+  avatarUrl?: string;
+  isLeader?: boolean;
 }
 
-export function MembersBlock() {
-  const [members, setMembers] = useState<Member[]>([
-    { id: "1", name: "名前を入力", role: "リーダー", isLeader: true },
-    { id: "2", name: "名前を入力", role: "会計", isLeader: false },
-  ]);
+interface MembersContent {
+  members?: Member[];
+}
 
-  const addMember = () => {
-    const newMember: Member = {
-      id: Math.random().toString(36).substr(2, 9),
-      name: "",
-      role: "",
-      isLeader: false,
-    };
-    setMembers([...members, newMember]);
-  };
+interface Props {
+  content?: Record<string, unknown>;
+}
 
-  const updateMember = (id: string, field: keyof Member, value: any) => {
-    setMembers(members.map(m => m.id === id ? { ...m, [field]: value } : m));
-  };
+export function MembersBlock({ content }: Props) {
+  const typedContent = content as unknown as MembersContent;
+  const members = typedContent?.members || [];
 
-  const deleteMember = (id: string) => {
-    setMembers(members.filter(m => m.id !== id));
-  };
+  if (members.length === 0) {
+    return (
+      <div className="w-full h-32 flex items-center justify-center border-2 border-dashed border-zinc-100 rounded-xl text-zinc-300 text-xs font-bold">
+        メンバーが登録されていません
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {members.map((member) => (
           <div
             key={member.id}
-            className="flex items-center gap-4 p-4 bg-zinc-50 dark:bg-zinc-950 rounded-2xl relative group"
+            className="flex items-center gap-4 p-4 bg-zinc-50 dark:bg-zinc-950 rounded-2xl relative"
           >
-            <div className="relative w-16 h-16 rounded-full bg-white dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 flex items-center justify-center text-zinc-300 overflow-hidden shadow-inner">
-              <User size={32} />
+            <div className="relative w-16 h-16 rounded-full bg-white dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 flex items-center justify-center text-zinc-300 overflow-hidden shadow-inner shrink-0">
+              {member.avatarUrl ? (
+                <Image src={member.avatarUrl} alt={member.name} fill className="object-cover" />
+              ) : (
+                <User size={32} />
+              )}
               {member.isLeader && (
-                <div className="absolute -top-1 -right-1 bg-yellow-400 text-white p-1 rounded-full shadow-sm">
+                <div className="absolute top-0 right-0 bg-yellow-400 text-white p-1 rounded-full shadow-sm z-10 translate-x-1/4 -translate-y-1/4">
                   <Star size={10} fill="currentColor" />
                 </div>
               )}
             </div>
 
-            <div className="flex-1 space-y-1">
-              <input
-                type="text"
-                value={member.name}
-                placeholder="名前"
-                onChange={(e) => updateMember(member.id, "name", e.target.value)}
-                className="w-full bg-transparent font-bold text-sm focus:outline-none border-b border-transparent hover:border-zinc-200 dark:hover:border-zinc-800 focus:border-[var(--primary)] transition-colors"
-              />
-              <input
-                type="text"
-                value={member.role}
-                placeholder="役割（例: 運転手）"
-                onChange={(e) => updateMember(member.id, "role", e.target.value)}
-                className="w-full bg-transparent text-xs text-[var(--muted)] focus:outline-none"
-              />
+            <div className="flex-1 space-y-1 min-w-0">
+              <h4 className="font-bold text-sm text-zinc-800 dark:text-zinc-200 truncate">
+                {member.name || "名称未設定"}
+              </h4>
+              <p className="text-xs text-[var(--muted)] truncate">
+                {member.role || "役割未設定"}
+              </p>
             </div>
-
-            <button
-              onClick={() => deleteMember(member.id)}
-              className="p-1 opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-red-500 transition-all absolute top-2 right-2"
-            >
-              <Trash2 size={14} />
-            </button>
           </div>
         ))}
       </div>
-
-      <button
-        onClick={addMember}
-        className="w-full py-3 border-2 border-dashed border-zinc-100 dark:border-zinc-900 rounded-xl text-[var(--muted)] hover:text-[var(--primary)] hover:border-indigo-500/20 transition-all flex items-center justify-center gap-2 text-xs font-medium"
-      >
-        <Plus size={14} />
-        メンバーを追加
-      </button>
     </div>
   );
 }

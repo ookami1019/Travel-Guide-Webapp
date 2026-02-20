@@ -1,84 +1,69 @@
 "use client";
 
-import React, { useState } from "react";
-import { Plus, Trash2, CheckSquare, Square } from "lucide-react";
+import React from "react";
+import { CheckSquare, Square } from "lucide-react";
 
 interface LuggageItem {
   id: string;
-  text: string;
-  checked: boolean;
-  category: string;
+  name: string;
+  isChecked: boolean;
 }
 
-export function LuggageBlock() {
-  const [items, setItems] = useState<LuggageItem[]>([
-    { id: "1", text: "着替え", checked: false, category: "基本" },
-    { id: "2", text: "充電器", checked: false, category: "電子機器" },
-    { id: "3", text: "洗面用具", checked: false, category: "基本" },
-  ]);
+interface LuggageCategory {
+  id: string;
+  name: string;
+  items: LuggageItem[];
+}
 
-  const toggleItem = (id: string) => {
-    setItems(items.map(item => item.id === id ? { ...item, checked: !item.checked } : item));
-  };
+interface LuggageContent {
+  categories?: LuggageCategory[];
+}
 
-  const addItem = () => {
-    const newItem: LuggageItem = {
-      id: Math.random().toString(36).substr(2, 9),
-      text: "",
-      checked: false,
-      category: "自由項目",
-    };
-    setItems([...items, newItem]);
-  };
+interface Props {
+  content?: Record<string, unknown>;
+}
 
-  const deleteItem = (id: string) => {
-    setItems(items.filter(item => item.id !== id));
-  };
+export function LuggageBlock({ content }: Props) {
+  const typedContent = content as unknown as LuggageContent;
+  const categories = typedContent?.categories || [];
 
-  const updateItemText = (id: string, text: string) => {
-    setItems(items.map(item => item.id === id ? { ...item, text } : item));
-  };
+  if (categories.length === 0) {
+    return (
+      <div className="w-full h-32 flex items-center justify-center border-2 border-dashed border-zinc-100 rounded-xl text-zinc-300 text-xs font-bold">
+        持ち物が登録されていません
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="flex items-center gap-3 p-3 bg-zinc-50 dark:bg-zinc-950 rounded-xl group transition-all hover:ring-1 hover:ring-indigo-500/20"
-          >
-            <button
-              onClick={() => toggleItem(item.id)}
-              className="text-[var(--primary)] transition-colors"
-            >
-              {item.checked ? <CheckSquare size={20} /> : <Square size={20} className="text-zinc-400" />}
-            </button>
-
-            <input
-              type="text"
-              value={item.text}
-              placeholder="アイテム名"
-              onChange={(e) => updateItemText(item.id, e.target.value)}
-              className={`flex-1 bg-transparent focus:outline-none text-sm ${item.checked ? 'text-zinc-400 line-through' : ''}`}
-            />
-
-            <button
-              onClick={() => deleteItem(item.id)}
-              className="p-1 opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-red-500 transition-all"
-            >
-              <Trash2 size={14} />
-            </button>
+    <div className="w-full space-y-6">
+      {categories.map((category) => (
+        <div key={category.id} className="space-y-3">
+          <h4 className="font-bold text-sm text-[var(--primary)] border-b border-zinc-100 dark:border-zinc-800 pb-1">
+            {category.name || "名称未設定カテゴリ"}
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {category.items.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center gap-3 p-3 bg-zinc-50 dark:bg-zinc-950 rounded-xl transition-all"
+              >
+                <div className="text-[var(--primary)]">
+                  {item.isChecked ? <CheckSquare size={18} /> : <Square size={18} className="text-zinc-400" />}
+                </div>
+                <span className={`flex-1 text-sm font-medium ${item.isChecked ? 'text-zinc-400 line-through' : 'text-zinc-700 dark:text-zinc-300'}`}>
+                  {item.name || "名称未設定アイテム"}
+                </span>
+              </div>
+            ))}
+            {category.items.length === 0 && (
+              <div className="text-xs text-zinc-400 italic py-2 pl-2">
+                アイテムが登録されていません
+              </div>
+            )}
           </div>
-        ))}
-      </div>
-
-      <button
-        onClick={addItem}
-        className="w-full py-3 border-2 border-dashed border-zinc-100 dark:border-zinc-900 rounded-xl text-[var(--muted)] hover:text-[var(--primary)] hover:border-indigo-500/20 transition-all flex items-center justify-center gap-2 text-xs font-medium"
-      >
-        <Plus size={14} />
-        アイテムを追加
-      </button>
+        </div>
+      ))}
     </div>
   );
 }

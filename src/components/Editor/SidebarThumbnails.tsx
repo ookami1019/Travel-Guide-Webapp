@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Plus, FileText } from "lucide-react";
+import { Plus } from "lucide-react";
 import { TravelPage } from "@/types/travel";
 
 interface Props {
@@ -25,8 +25,8 @@ export function SidebarThumbnails({ pages, currentPageIndex, onSelectPage, onAdd
             <button
               onClick={() => onSelectPage(index)}
               className={`w-full group relative aspect-[1/1.414] bg-white border-2 rounded-md overflow-hidden transition-all flex shadow-sm ${currentPageIndex === index
-                  ? 'border-indigo-500 ring-4 ring-indigo-500/10'
-                  : 'border-transparent hover:border-zinc-300 dark:hover:border-zinc-700'
+                ? 'border-indigo-500 ring-4 ring-indigo-500/10'
+                : 'border-transparent hover:border-zinc-300 dark:hover:border-zinc-700'
                 }`}
             >
               <div className="absolute left-1 top-1 bg-zinc-800/80 backdrop-blur-sm rounded-sm px-1 py-0.5 z-10">

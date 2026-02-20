@@ -1,4 +1,4 @@
-import { Client } from "@googlemaps/google-maps-services-js";
+import { Client, TravelMode } from "@googlemaps/google-maps-services-js";
 
 const client = new Client({});
 
@@ -23,7 +23,7 @@ export async function getTravelTime(origin: string, destination: string, mode: '
       params: {
         origin,
         destination,
-        mode: mode as any,
+        mode: mode === 'driving' ? TravelMode.driving : TravelMode.transit,
         key: apiKey,
       }
     });
@@ -42,8 +42,9 @@ export async function getTravelTime(origin: string, destination: string, mode: '
 /**
  * 入力されたルートに基づいて周辺のスッポトを提案する（Google Places API）
  */
-export async function getRecommendedSpots(location: string, type: string = 'tourist_attraction') {
+export async function getRecommendedSpots(_location: string) {
   // 実装予定：Places API を用いたスポット検索
+  console.log("Searching recommended spots for:", _location);
   return [
     { name: "おすすめの温泉", description: "景色が綺麗な露天風呂です" },
     { name: "人気のカフェ", description: "地元の食材を使ったスイーツが人気" }

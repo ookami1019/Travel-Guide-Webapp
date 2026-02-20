@@ -12,7 +12,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 /**
  * しおりデータを保存する
  */
-export async function saveTravelGuide(userId: string, title: string, blocks: any[]) {
+export async function saveTravelGuide(userId: string, title: string, blocks: Record<string, unknown>[]) {
   const { data, error } = await supabase
     .from('travel_guides')
     .upsert({

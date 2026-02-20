@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     const executablePath = await chromium.executablePath();
     const browser = await puppeteer.launch({
       args: chromium.args,
-      defaultViewport: (chromium as any).defaultViewport || { width: 1280, height: 720 },
+      defaultViewport: (chromium as { defaultViewport?: { width: number, height: number } }).defaultViewport || { width: 1280, height: 720 },
       executablePath,
       headless: true,
     });
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     response.headers.set("Content-Disposition", `attachment; filename="travel-guide.pdf"`);
 
     return response;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("PDFエクスポートエラー:", error);
     return NextResponse.json({ error: "PDF生成に失敗しました" }, { status: 500 });
   }

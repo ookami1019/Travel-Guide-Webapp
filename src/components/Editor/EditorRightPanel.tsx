@@ -2,11 +2,14 @@
 
 import React from "react";
 import { Edit3, Plus, Trash2, GripVertical, ChevronRight } from "lucide-react";
-import { TravelPage, TravelBlock } from "@/types/travel";
+import { TravelPage } from "@/types/travel";
+import { ItineraryEditor } from "./Editors/ItineraryEditor";
+import { LuggageEditor } from "./Editors/LuggageEditor";
+import { MembersEditor } from "./Editors/MembersEditor";
 
 interface Props {
   page: TravelPage;
-  onUpdateBlock: (blockId: string, content: any) => void;
+  onUpdateBlock: (blockId: string, content: Record<string, unknown>) => void;
   onDeleteBlock: (blockId: string) => void;
 }
 
@@ -47,20 +50,39 @@ export function EditorRightPanel({ page, onUpdateBlock, onDeleteBlock }: Props) 
                 </div>
 
                 <div className="p-4 bg-zinc-50/30">
-                  {/* Block specific simplified editors could go here */}
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-zinc-400 uppercase">見出し</label>
-                      <input
-                        type="text"
-                        defaultValue={block.title}
-                        className="w-full text-xs font-medium bg-white border border-zinc-200 rounded px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/10"
-                      />
+                  {block.type === 'itinerary' && (
+                    <ItineraryEditor
+                      content={block.content}
+                      onChange={(newContent) => onUpdateBlock(block.id, newContent)}
+                    />
+                  )}
+                  {block.type === 'luggage' && (
+                    <LuggageEditor
+                      content={block.content}
+                      onChange={(newContent) => onUpdateBlock(block.id, newContent)}
+                    />
+                  )}
+                  {block.type === 'members' && (
+                    <MembersEditor
+                      content={block.content}
+                      onChange={(newContent) => onUpdateBlock(block.id, newContent)}
+                    />
+                  )}
+                  {['memo', 'text', 'image', 'ai-spot'].includes(block.type) && (
+                    <div className="space-y-3">
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-bold text-zinc-400 uppercase">見出し</label>
+                        <input
+                          type="text"
+                          defaultValue={block.title}
+                          className="w-full text-xs font-medium bg-white border border-zinc-200 rounded px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/10"
+                        />
+                      </div>
+                      <button className="w-full py-1.5 bg-zinc-900 text-white text-[9px] font-bold rounded flex items-center justify-center gap-1 hover:bg-zinc-800 transition-colors">
+                        詳細を編集 <ChevronRight size={10} />
+                      </button>
                     </div>
-                    <button className="w-full py-1.5 bg-zinc-900 text-white text-[9px] font-bold rounded flex items-center justify-center gap-1 hover:bg-zinc-800 transition-colors">
-                      詳細を編集 <ChevronRight size={10} />
-                    </button>
-                  </div>
+                  )}
                 </div>
               </div>
             ))}

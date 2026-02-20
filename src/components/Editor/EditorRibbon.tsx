@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, ChevronUp, ChevronDown, Calendar, ClipboardList, Users, StickyNote, Image as ImageIcon, Type, Sparkles } from "lucide-react";
+import { ChevronUp, ChevronDown, Calendar, ClipboardList, Users, StickyNote, Image as ImageIcon, Type, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { BlockType } from "@/types/travel";
 
 interface Props {
-  onAddBlock: (type: any) => void;
+  onAddBlock: (type: BlockType) => void;
 }
 
 export function EditorRibbon({ onAddBlock }: Props) {
@@ -15,23 +16,23 @@ export function EditorRibbon({ onAddBlock }: Props) {
     {
       label: "基本ブロック",
       items: [
-        { id: "itinerary", label: "行程", icon: <Calendar size={20} />, color: "bg-blue-500" },
-        { id: "luggage", label: "持ち物", icon: <ClipboardList size={20} />, color: "bg-emerald-500" },
-        { id: "members", label: "メンバー", icon: <Users size={20} />, color: "bg-orange-500" },
+        { id: "itinerary" as BlockType, label: "行程", icon: <Calendar size={20} />, color: "bg-blue-500" },
+        { id: "luggage" as BlockType, label: "持ち物", icon: <ClipboardList size={20} />, color: "bg-emerald-500" },
+        { id: "members" as BlockType, label: "メンバー", icon: <Users size={20} />, color: "bg-orange-500" },
       ]
     },
     {
       label: "装飾・その他",
       items: [
-        { id: "memo", label: "メモ", icon: <StickyNote size={20} />, color: "bg-amber-400" },
-        { id: "image", label: "写真", icon: <ImageIcon size={20} />, color: "bg-purple-500" },
-        { id: "text", label: "テキスト", icon: <Type size={20} />, color: "bg-zinc-600" },
+        { id: "memo" as BlockType, label: "メモ", icon: <StickyNote size={20} />, color: "bg-amber-400" },
+        { id: "image" as BlockType, label: "写真", icon: <ImageIcon size={20} />, color: "bg-purple-500" },
+        { id: "text" as BlockType, label: "テキスト", icon: <Type size={20} />, color: "bg-zinc-600" },
       ]
     },
     {
       label: "AI提案",
       items: [
-        { id: "ai-spot", label: "スポット提案", icon: <Sparkles size={20} />, color: "bg-indigo-500" },
+        { id: "ai-spot" as BlockType, label: "スポット提案", icon: <Sparkles size={20} />, color: "bg-indigo-500" },
       ]
     }
   ];
