@@ -173,13 +173,16 @@ export default function EditorPage() {
 function PageContentRenderer({ page }: { page: PageContent }) {
   if (page.pageNum === 1) {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center p-12 border-2 border-dashed border-zinc-100 rounded-3xl">
+      <div className="w-full h-full flex flex-col items-center justify-center p-12 border-2 border-dashed border-zinc-100 rounded-3xl relative">
         <div className="w-24 h-24 bg-indigo-500 rounded-3xl mb-8 flex items-center justify-center text-white shadow-xl rotate-3">
           <span className="text-4xl font-black italic">旅</span>
         </div>
         <h1 className="text-3xl font-black text-center text-zinc-900 leading-tight">旅のしおりタイトル</h1>
         <div className="mt-8 px-6 py-2 bg-zinc-50 rounded-full border border-zinc-100 text-[10px] font-bold text-zinc-400">
           FRONT COVER
+        </div>
+        <div className="absolute bottom-4 text-zinc-100 text-xs font-bold mix-blend-difference">
+          {page.pageNum}
         </div>
       </div>
     );
