@@ -6,6 +6,7 @@ import { Save, Download, ChevronLeft, Settings, Share2, AlertCircle } from "luci
 import Link from "next/link";
 import { EditorRibbon } from "@/components/Editor/EditorRibbon";
 import { SidebarThumbnails } from "@/components/Editor/SidebarThumbnails";
+import { EditorRightPanel } from "@/components/Editor/EditorRightPanel";
 import { ItineraryBlock } from "@/components/Editor/ItineraryBlock";
 import { LuggageBlock } from "@/components/Editor/LuggageBlock";
 import { MembersBlock } from "@/components/Editor/MembersBlock";
@@ -41,6 +42,23 @@ export default function EditorPage() {
       }
       return page;
     }));
+  };
+
+  const deleteBlock = (blockId: string) => {
+    setPages(prev => prev.map((page, idx) => {
+      if (idx === currentPageIndex) {
+        return {
+          ...page,
+          blocks: page.blocks.filter(b => b.id !== blockId)
+        };
+      }
+      return page;
+    }));
+  };
+
+  const handleUpdateBlock = (blockId: string, content: any) => {
+    // 将来的な同期ロジック
+    console.log("Update block", blockId, content);
   };
 
   const addPageSet = () => {
@@ -92,8 +110,9 @@ export default function EditorPage() {
       {/* Top Ribbon */}
       <EditorRibbon onAddBlock={addBlock} />
 
-      {/* Main Area */}
+      {/* Main Area: 3-Column Layout */}
       <div className="flex-1 flex overflow-hidden">
+        {/* Left: スリムサイドバー */}
         <SidebarThumbnails
           pages={pages}
           currentPageIndex={currentPageIndex}
@@ -101,37 +120,44 @@ export default function EditorPage() {
           onAddPage={addPageSet}
         />
 
-        <main className="flex-1 overflow-auto p-12 flex justify-center items-start bg-zinc-200/50 dark:bg-zinc-900/50 custom-scrollbar">
+        {/* Center: プレビューキャンバス */}
+        <main className="flex-1 overflow-auto p-12 flex justify-center items-start bg-zinc-100/30 dark:bg-zinc-900/50 custom-scrollbar relative">
           <div className="relative">
             <div className="absolute -top-8 left-0 right-0 flex justify-between px-4 items-center">
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
-                {currentPageIndex === 0 ? '表紙' : currentPageIndex === pages.length - 1 ? '裏表紙' : `第 ${currentPageIndex + 1} ページ`}
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest leading-none">
+                Preview Mode
               </span>
-              <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Logical Page {currentPage.pageNum}</span>
+              <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest leading-none">Logical Page {currentPage.pageNum}</span>
             </div>
 
-            {/* A4 Vertical Canvas */}
-            <div className="w-[600px] h-[848px] bg-white shadow-2xl relative rounded-sm overflow-hidden flex flex-col">
+            <div className="w-[600px] h-[848px] bg-white shadow-2xl relative rounded-sm overflow-hidden flex flex-col pointer-events-none ring-1 ring-zinc-200/50">
               <PageContentRenderer page={currentPage} />
             </div>
           </div>
         </main>
+
+        {/* Right: 編集パネル */}
+        <EditorRightPanel
+          page={currentPage}
+          onUpdateBlock={handleUpdateBlock}
+          onDeleteBlock={deleteBlock}
+        />
       </div>
 
       {/* Status Bar */}
       <footer className="h-6 bg-zinc-100 dark:bg-zinc-800 border-t border-zinc-200 dark:border-zinc-700 flex items-center justify-between px-3 text-[10px] text-zinc-500 font-medium">
         <div className="flex items-center gap-4">
           <span>ページ {currentPageIndex + 1} / {pages.length}</span>
-          <span>論理編集モード</span>
+          <span>Property Editor Active</span>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-emerald-600 font-bold flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             印刷範囲内
           </span>
           <div className="flex items-center gap-2">
             <span>100%</span>
-            <div className="w-20 h-1 bg-zinc-200 rounded-full">
+            <div className="w-16 h-1 bg-zinc-200 rounded-full">
               <div className="w-full h-full bg-zinc-400" />
             </div>
           </div>
@@ -195,20 +221,19 @@ function PageContentRenderer({ page }: { page: TravelPage }) {
       {page.blocks.map((block: TravelBlock) => (
         <div
           key={block.id}
-          className={`bg-white rounded-2xl shadow-sm ring-1 ring-zinc-100 p-6 w-full transform transition-all duration-300 ${isOverflowing ? 'scale-[0.95] p-3' : 'scale-100'
+          className={`bg-white rounded-2xl shadow-sm ring-1 ring-zinc-100 p-6 w-full transition-all ${isOverflowing ? 'scale-[0.95]' : 'scale-100'
             }`}
         >
-          <div className="flex items-center justify-between mb-4 border-b border-zinc-50 pb-1">
+          <div className="flex items-center justify-between mb-3 border-b border-zinc-50 pb-1">
             <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{block.title}</span>
-            <span className="text-[8px] font-bold text-zinc-200">ID: {block.id}</span>
           </div>
           <div className={isOverflowing ? 'scale-[0.9] origin-top' : ''}>
-            {block.type === 'itinerary' && <ItineraryBlock />}
+            {block.type === 'itinerary' && <div className="space-y-4 opacity-100"><ItineraryBlock /></div>}
             {block.type === 'luggage' && <LuggageBlock />}
             {block.type === 'members' && <MembersBlock />}
             {(block.type === 'memo' || block.type === 'text') && (
-              <div className="p-4 bg-amber-50 rounded-xl border border-amber-100 italic text-amber-900/60 text-xs">
-                自由記述メモエリア
+              <div className="p-4 bg-amber-50/50 rounded-xl border border-amber-100 text-amber-900/40 text-xs italic">
+                📝 自由記述エリア
               </div>
             )}
           </div>
@@ -216,8 +241,8 @@ function PageContentRenderer({ page }: { page: TravelPage }) {
       ))}
 
       {page.blocks.length === 0 && (
-        <div className="h-full w-full flex flex-col items-center justify-center border-2 border-dashed border-zinc-50 rounded-3xl opacity-30">
-          <span className="text-[10px] font-bold text-zinc-300 italic uppercase">空のページ</span>
+        <div className="h-full w-full flex flex-col items-center justify-center border-2 border-dashed border-zinc-50 rounded-3xl opacity-20">
+          <span className="text-[10px] font-bold text-zinc-300 italic uppercase">Preview Area</span>
         </div>
       )}
       {pageNumberDisplay}
