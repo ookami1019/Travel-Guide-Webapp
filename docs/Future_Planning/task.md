@@ -10,8 +10,8 @@
 - [ ] ドラッグ＆ドロップによるブロックの並び替え機能の実装
 
 ## Phase 6: Google Maps API連携
-- [ ] Google Maps API連携の本格実装（`src/lib/google-maps.ts`の活用）
-- [ ] 行程表入力時の2地点間の移動時間・距離の自動計算機能
+- [/] Google Maps API連携の本格実装（`src/lib/google-maps.ts`の活用）
+- [/] 行程表入力時の2地点間の移動時間・距離の自動計算機能
 - [ ] ルート周辺のおすすめスポット提案機能のUI組み込み
 
 ## Phase 7: PDFエクスポート機能の完成

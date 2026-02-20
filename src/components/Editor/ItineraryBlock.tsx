@@ -2,13 +2,13 @@
 
 import React from "react";
 import { Clock, MapPin, Car } from "lucide-react";
-import { getTravelTime } from "@/lib/google-maps";
 
 interface Spot {
   id: string;
   time: string;
   name: string;
   description: string;
+  travelTime?: string;
 }
 
 interface ItineraryContent {
@@ -58,25 +58,14 @@ export function ItineraryBlock({ content }: Props) {
             </div>
           </div>
 
-          {/* Travel Time Suggestion between items */}
-          {index < spots.length - 1 && (
+          {/* Travel Time Display between items */}
+          {index < spots.length - 1 && spot.travelTime && (
             <div className="mt-3 -ml-3 flex items-center gap-2">
               <div className="h-6 w-[1px] bg-zinc-200 dark:bg-zinc-800" />
-              <button
-                onClick={async () => {
-                  const nextSpot = spots[index + 1];
-                  if (spot.name && nextSpot.name) {
-                    const result = await getTravelTime(spot.name, nextSpot.name);
-                    alert(`移動時間の目安: ${result.duration}\n距離: ${result.distance}`);
-                  } else {
-                    alert("出発地と到着地の両方を入力してください");
-                  }
-                }}
-                className="flex items-center gap-1.5 px-2.5 py-1 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-full text-[9px] font-bold text-zinc-400 hover:text-[var(--primary)] hover:border-indigo-500/20 transition-all shadow-sm"
-              >
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-full text-[9px] font-bold text-[var(--primary)] shadow-sm">
                 <Car size={10} />
-                移動時間を計算
-              </button>
+                {spot.travelTime}
+              </div>
             </div>
           )}
         </div>

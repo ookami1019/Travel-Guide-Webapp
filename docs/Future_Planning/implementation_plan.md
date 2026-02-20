@@ -16,8 +16,18 @@
 - `ItineraryEditor`, `LuggageEditor` などのサブコンポーネントを作成し、`onUpdateBlock` 関数を通じて全体の状態 (`pages` ステート) を更新します。
 
 ### [Phase 6] Google Maps API連携
-すでに枠組みがある `src/lib/google-maps.ts` を利用し、行程表で「出発地」と「目的地」を入力した際に、移動時間と距離を自動算出してUIに反映させます。
+すでに枠組みがある `src/lib/google-maps.ts` を本番APIに繋ぎこみ、行程表で「出発地」と「目的地」を入力した際に、移動時間と距離を自動算出してUIに反映させます。
 周辺スポットの提案機能もUIに組み込みます。
+
+#### [MODIFY] [google-maps.ts](file:///Users/seiji/Antigravity-1/Travel_guide_Webapp/src/lib/google-maps.ts)
+`@googlemaps/google-maps-services-js` を用いたルート検索ロジックは実装済みのため、APIキーの環境変数が読み込まれることを確認します。さらに Places API を用いたおすすめスポット検索（Text Search 等）の実装を行います。
+
+#### [MODIFY] [ItineraryEditor.tsx](file:///Users/seiji/Antigravity-1/Travel_guide_Webapp/src/components/Editor/Editors/ItineraryEditor.tsx)
+スポットの間に「移動時間」を表示・計算するUIを追加します。具体的には、2つのスポットの `name` が入力されたタイミング（またはボタン押下時）で `getTravelTime` を呼び出し、結果を差し込みます。
+また、おすすめスポットを提案する「💡おすすめ」ボタンを設置し、`getRecommendedSpots` の結果を一覧表示して追加できるようにします。
+
+#### [MODIFY] [ItineraryBlock.tsx](file:///Users/seiji/Antigravity-1/Travel_guide_Webapp/src/components/Editor/ItineraryBlock.tsx)
+Editor側で計算・保存された移動時間等のデータをプレビュー上に美しく表示するためのUI改修を行います。
 
 ### [Phase 7] 高精細PDFエクスポート
 現在の「仕上がり確認・保存」機能はUI上のプレビューですが、これを実際のPDFファイルとしてダウンロードできるようにします。

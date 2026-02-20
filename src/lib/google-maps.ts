@@ -1,4 +1,4 @@
-import { Client, TravelMode } from "@googlemaps/google-maps-services-js";
+import { Client, TravelMode, Language } from "@googlemaps/google-maps-services-js";
 
 const client = new Client({});
 
@@ -40,13 +40,35 @@ export async function getTravelTime(origin: string, destination: string, mode: '
 }
 
 /**
- * 入力されたルートに基づいて周辺のスッポトを提案する（Google Places API）
+ * 入力されたルートに基づいて周辺のスポットを提案する（Google Places API Text Search）
  */
-export async function getRecommendedSpots(_location: string) {
-  // 実装予定：Places API を用いたスポット検索
-  console.log("Searching recommended spots for:", _location);
-  return [
-    { name: "おすすめの温泉", description: "景色が綺麗な露天風呂です" },
-    { name: "人気のカフェ", description: "地元の食材を使ったスイーツが人気" }
-  ];
+export async function getRecommendedSpots(location: string) {
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+
+  if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
+    console.warn("Google Maps API Key が設定されていません。モックデータを返します。");
+    return [
+      { name: "おすすめの温泉", description: "景色が綺麗な露天風呂です" },
+      { name: "人気のカフェ", description: "地元の食材を使ったスイーツが人気" }
+    ];
+  }
+
+  try {
+    const response = await client.textSearch({
+      params: {
+        query: `${location} 観光 おすすめ`,
+        language: Language.ja,
+        key: apiKey,
+      }
+    });
+
+    // 最大3件を返す
+    return response.data.results.slice(0, 3).map(place => ({
+      name: place.name || "名称不明",
+      description: place.formatted_address || "住所不明"
+    }));
+  } catch (error) {
+    console.error("Google Places API 連携エラー:", error);
+    throw error;
+  }
 }
